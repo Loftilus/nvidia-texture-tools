@@ -269,6 +269,15 @@ bool Compressor::Private::compress(const InputOptions::Private & inputOptions, c
             img.toLinear(inputOptions.inputGamma);
         }
 
+        // Normalize normalmap.
+        if (img.isNormalMap()) {
+            if (inputOptions.normalizeMipmaps) {
+                img.expandNormals();
+                img.normalizeNormalMap();
+                img.packNormals();
+            }
+        }
+
         // Resize input.
         img.resize(w, h, d, ResizeFilter_Box);
 
@@ -320,7 +329,9 @@ bool Compressor::Private::compress(const InputOptions::Private & inputOptions, c
 
             if (img.isNormalMap()) {
                 if (inputOptions.normalizeMipmaps) {
+                    img.expandNormals();
                     img.normalizeNormalMap();
+                    img.packNormals();
                 }
                 tmp = img;
             }
